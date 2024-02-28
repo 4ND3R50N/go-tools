@@ -12,14 +12,14 @@ import (
 
 func TestFilter_Filter(t *testing.T) {
 	listOfElements := []*string{
-		converter.ConvertToPointer("Hello"), converter.ConvertToPointer("World"),
+		converter.ToPointer("Hello"), converter.ToPointer("World"),
 	}
 	matchingElements := filter.Filter(listOfElements, func(element *string) bool {
 		return strings.Contains(*element, "r")
 	})
 
-	assert.Equal(t, converter.ConvertToPointer("Hello"), listOfElements[0])
-	assert.Equal(t, converter.ConvertToPointer("World"), listOfElements[1])
+	assert.Equal(t, converter.ToPointer("Hello"), listOfElements[0])
+	assert.Equal(t, converter.ToPointer("World"), listOfElements[1])
 	assert.Equal(t, 1, len(matchingElements))
-	assert.Equal(t, converter.ConvertToPointer("World"), matchingElements[0])
+	assert.Equal(t, converter.ToPointer("World"), matchingElements[0])
 }
