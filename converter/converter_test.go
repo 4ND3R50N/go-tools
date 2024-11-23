@@ -1,6 +1,7 @@
 package converter_test
 
 import (
+	"encoding/json"
 	"github.com/4ND3R50N/go-tools/converter"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -40,4 +41,21 @@ func TestConverter_ToValueOrZero(t *testing.T) {
 
 	var pointerInt *uint64
 	assert.Equal(t, converter.ToValueOrZero(pointerInt), uint64(0))
+}
+
+func TestConverter_FromInterfaceTo(t *testing.T) {
+	type TestType map[string]string
+	// The real datatype.
+	anyTestType := TestType{
+		"test": "test",
+	}
+	// Convert anyTestType to interface{} but as string representation.
+	testTypeBytes, err := json.Marshal(anyTestType)
+	assert.NoError(t, err)
+	var myInterface interface{} = string(testTypeBytes)
+
+	// Convert '{"test":"test"}' interface data back to TestType.
+	againTestType, err := converter.FromInterfaceTo[TestType](myInterface)
+	assert.NoError(t, err)
+	assert.Equal(t, anyTestType, againTestType)
 }

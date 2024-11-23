@@ -1,6 +1,14 @@
 package converter
 
-import "golang.org/x/exp/constraints"
+import (
+	"encoding/json"
+	"errors"
+	"golang.org/x/exp/constraints"
+)
+
+var (
+	ErrUnsupportedTypeConversion = errors.New("unsupported type conversion")
+)
 
 // ToPointer converts any type (E) to pointer (*E)
 func ToPointer[E any](toConvert E) *E {
@@ -29,4 +37,20 @@ func ToPointerOrNil[T constraints.Ordered](toConvert T) *T {
 		return nil
 	}
 	return ToPointer(toConvert)
+}
+
+// FromInterfaceTo converts data from type interface{} to any type given.
+// The used switch case shows which type conversions are supported.
+// If the type is not supported, ErrUnsupportedTypeConversion is thrown.
+func FromInterfaceTo[T any](data interface{}) (T, error) {
+	var convertedData T
+	switch d := data.(type) {
+	case string:
+		if err := json.Unmarshal([]byte(d), &convertedData); err != nil {
+			return convertedData, err
+		}
+		return convertedData, nil
+	default:
+		return convertedData, ErrUnsupportedTypeConversion
+	}
 }
