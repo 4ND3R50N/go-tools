@@ -23,3 +23,32 @@ func TestFilter_Filter(t *testing.T) {
 	assert.Equal(t, 1, len(matchingElements))
 	assert.Equal(t, converter.ToPointer("World"), matchingElements[0])
 }
+
+func TestFilter_Distinct(t *testing.T) {
+	type TestCase struct {
+		name           string
+		input          []int
+		expectedOutput []int
+	}
+	testCases := []TestCase{{
+		name:           "remove duplicates",
+		input:          []int{1, 1, 2, 1, 0, 2, 1, 2, 3},
+		expectedOutput: []int{1, 2, 0, 3},
+	}, {
+		name:           "do nothing if there are no duplicates",
+		input:          []int{1, 2, 0, 3},
+		expectedOutput: []int{1, 2, 0, 3},
+	}, {
+		name:           "do nothing if slice is empty",
+		input:          []int{},
+		expectedOutput: []int{},
+	}}
+
+	for _, tt := range testCases {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			output := filter.Distinct(tt.input)
+			assert.Equal(t, output, tt.expectedOutput)
+		})
+	}
+}
